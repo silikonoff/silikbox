@@ -22,6 +22,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '21'
+      - name: Кэш зависимостей и Gradle Wrapper
+        uses: gradle/actions/setup-gradle@017a9effdb900e5b5b2fddfb590a105619dca3c3 # v4.4.2
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       - uses: actions/setup-go@v5
         with:
           go-version: '1.25.5'
@@ -53,8 +57,24 @@ jobs:
       - name: Сборка и проверка APK
         shell: pwsh
         run: |
-          ./gradlew.bat --no-daemon --max-workers=2 app:assembleOssDebug
-          if ($LASTEXITCODE) { throw 'APK build failed' }
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            $logPath = Join-Path $env:RUNNER_TEMP "silikbox-gradle-$attempt.log"
+            ./gradlew.bat --no-daemon --max-workers=2 app:assembleOssDebug 2>&1 | Tee-Object -FilePath $logPath
+            $buildExitCode = $LASTEXITCODE
+            if ($buildExitCode -eq 0) { break }
+            $buildLog = Get-Content -LiteralPath $logPath -Raw
+            $failureOffset = $buildLog.LastIndexOf('FAILURE: Build failed')
+            $failure = if ($failureOffset -ge 0) { $buildLog.Substring($failureOffset) } else { '' }
+            $downloadFailure = $failure -match 'Could not (?:resolve|GET|HEAD|get resource)'
+            $temporaryHttpFailure = $failure -match 'Received status code (?:429|502|503|504)\b'
+            if (!$downloadFailure -or !$temporaryHttpFailure -or $attempt -eq 3) {
+              throw "APK build failed (exit $buildExitCode); no further retry"
+            }
+            $delaySeconds = 30 * $attempt
+            Write-Warning "Dependency repository temporarily unavailable; retry $($attempt + 1)/3 in $delaySeconds seconds"
+            Start-Sleep -Seconds $delaySeconds
+          }
           $apk = @(Get-ChildItem app/build/outputs/apk/oss/debug -Filter '*arm64-v8a*.apk')
           if ($apk.Count -ne 1) { throw 'Expected one ARM64 APK' }
           New-Item -ItemType Directory -Force artifacts | Out-Null
