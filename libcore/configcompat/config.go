@@ -34,7 +34,11 @@ func Normalize(input []byte) ([]byte, error) {
 	if err := inbounds(config); err != nil {
 		return nil, err
 	}
+	explicitResolver := obj(config["route"])["default_domain_resolver"] != nil
 	if err := dns(config); err != nil {
+		return nil, err
+	}
+	if err := bootstrapDNS(config, explicitResolver); err != nil {
 		return nil, err
 	}
 	realityTCPCompatibility(config)

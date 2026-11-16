@@ -20,6 +20,8 @@ object Key {
 
     const val REMOTE_DNS = "remoteDns"
     const val DIRECT_DNS = "directDns"
+    const val BOOTSTRAP_DNS = "bootstrapDns"
+    const val BOOTSTRAP_SYSTEM_DNS = "bootstrapSystemDns"
     const val ENABLE_DNS_ROUTING = "enableDnsRouting"
     const val ENABLE_FAKEDNS = "enableFakeDns"
 

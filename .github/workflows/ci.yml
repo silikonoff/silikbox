@@ -27,7 +27,11 @@ jobs:
           go-version: '1.25.5'
           cache-dependency-path: libcore/go.sum
       - name: Проверка исходников
-        run: python tools/check_repository.py
+        run: |
+          python tools/check_repository.py
+          if ($LASTEXITCODE) { throw 'Repository validation failed' }
+          python tools/check_dns_defaults.py
+          if ($LASTEXITCODE) { throw 'DNS defaults migration validation failed' }
       - name: Android SDK и NDK
         shell: pwsh
         run: |
@@ -44,7 +48,7 @@ jobs:
       - name: Проверки совместимости
         shell: pwsh
         run: |
-          go -C libcore test -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest
+          go -C libcore test -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest ./bootstrapdns
           if ($LASTEXITCODE) { throw 'Tests failed' }
       - name: Сборка и проверка APK
         shell: pwsh
@@ -54,7 +58,7 @@ jobs:
           $apk = @(Get-ChildItem app/build/outputs/apk/oss/debug -Filter '*arm64-v8a*.apk')
           if ($apk.Count -ne 1) { throw 'Expected one ARM64 APK' }
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.1
+          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.2
           if ($LASTEXITCODE) { throw 'Native APK validation failed' }
           python tools/unsigned_apk.py $apk[0].FullName artifacts/silikbox-ci-unsigned-arm64.apk
           'НЕПОДПИСАННЫЙ артефакт CI. Для установки используйте подписанные APK из Releases.' | Set-Content artifacts/README.txt
