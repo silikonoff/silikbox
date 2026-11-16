@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/http/httptrace"
@@ -76,7 +77,14 @@ func UrlTest(client *http.Client, link string, timeout int32, standard int) (int
 				return 0, err
 			}
 		}
+		// RTT is measured on an established connection. Closing an unread body
+		// discards the tunnel and unnecessarily starts a second TLS handshake.
+		// Drain small probe responses, bounded by both size and request context.
+		_, readErr := io.Copy(io.Discard, io.LimitReader(resp.Body, 64<<10))
 		resp.Body.Close()
+		if readErr != nil {
+			return 0, readErr
+		}
 	}
 
 	if time_end.IsZero() {

@@ -14,6 +14,7 @@ import (
 	"runtime/debug"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/matsuridayo/libneko/protect_server"
 	"github.com/matsuridayo/libneko/speedtest"
@@ -246,7 +247,9 @@ func connectionTestClient(i *BoxInstance) *http.Client {
 
 func UrlTest(i *BoxInstance, link string, timeout int32) (latency int32, err error) {
 	defer device.DeferPanicToError("box.UrlTest", func(err_ error) { err = err_ })
-	return speedtest.UrlTest(connectionTestClient(i), link, timeout, speedtest.UrlTestStandard_RTT)
+	client := connectionTestClient(i)
+	connectiontest.BoundClient(client, time.Duration(timeout)*time.Millisecond)
+	return speedtest.UrlTest(client, link, timeout, speedtest.UrlTestStandard_RTT)
 }
 
 type ConnectionTestResult struct {
@@ -265,6 +268,7 @@ func RunConnectionTest(i *BoxInstance, link string, timeout int32) (result *Conn
 		result.Diagnostics = trace.Report(err)
 	})
 	client := connectionTestClient(i)
+	connectiontest.BoundClient(client, time.Duration(timeout)*time.Millisecond)
 	client.Transport = trace.Wrap(client.Transport)
 	latency, err := speedtest.UrlTest(client, link, timeout, speedtest.UrlTestStandard_RTT)
 	result.Latency = latency
