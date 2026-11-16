@@ -29,7 +29,9 @@ jobs:
       - name: Проверка исходников
         run: |
           python tools/check_repository.py
+          if ($LASTEXITCODE) { throw 'Repository validation failed' }
           python tools/check_dns_defaults.py
+          if ($LASTEXITCODE) { throw 'DNS defaults migration validation failed' }
       - name: Android SDK и NDK
         shell: pwsh
         run: |
