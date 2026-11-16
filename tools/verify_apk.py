@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("apk", type=Path)
 parser.add_argument("aar", type=Path)
 parser.add_argument("report", type=Path)
-parser.add_argument("--runtime-label", default="1.14.4-silikbox.1")
+parser.add_argument("--runtime-label", default="1.14.4-silikbox.2")
 args = parser.parse_args()
 with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
     libraries = [n for n in apk.namelist() if n.startswith("lib/") and n.endswith(".so")]
@@ -33,6 +33,13 @@ with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
             alignments.append(header[7])
     assert alignments and min(alignments) >= 16384, alignments
     assert args.runtime_label.encode() in library, "missing expected runtime label"
+    assert b"silikbox-bootstrap" in library, "missing endpoint DNS fallback transport"
+    forbidden = ("223.5.5.5", "223.6.6.6", "dns.alidns.com")
+    for name in apk.namelist():
+        if name.endswith((".dex", ".so", ".arsc", ".xml")):
+            data = apk.read(name)
+            for address in forbidden:
+                assert address.encode() not in data and address.encode("utf-16le") not in data, f"retired DNS endpoint in {name}"
     assets = ["assets/sing-box/geoip.db.xz", "assets/sing-box/geosite.db.xz",
               "assets/sing-box/geoip.version.txt", "assets/sing-box/geosite.version.txt",
               "assets/yacd.zip", "assets/yacd.version.txt"]
@@ -52,6 +59,8 @@ with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
         "aar_sha256": sha256(args.aar.read_bytes()),
         "library_sha256": sha256(library),
         "aar_library_matches_apk": True,
+        "retired_dns_endpoints_absent": True,
+        "bootstrap_dns_policy": ["Google DoH", "Cloudflare ordinary DNS", "Android system DNS"],
         "abi": "arm64-v8a", "runtime_label": args.runtime_label,
         "elf_load_alignments": alignments,
         "bundled_assets": checked_assets,

@@ -159,6 +159,8 @@ class SettingsPreferenceFragment : PreferenceFragmentCompat() {
         enableFakeDns.onPreferenceChangeListener = reloadListener
         remoteDns.onPreferenceChangeListener = reloadListener
         directDns.onPreferenceChangeListener = reloadListener
+        findPreference<SwitchPreference>(Key.BOOTSTRAP_DNS)!!.onPreferenceChangeListener = reloadListener
+        findPreference<SwitchPreference>(Key.BOOTSTRAP_SYSTEM_DNS)!!.onPreferenceChangeListener = reloadListener
         enableDnsRouting.onPreferenceChangeListener = reloadListener
 
         ipv6Mode.onPreferenceChangeListener = reloadListener

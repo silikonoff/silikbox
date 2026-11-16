@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="DOWNLOADS.md"><img src="https://img.shields.io/badge/Скачать_для_Android-Downloads-2683FF?style=for-the-badge&amp;logo=android&amp;logoColor=white" alt="Downloads — готовые APK для Android"></a>
-  <a href="https://github.com/silikonoff/silikbox/releases"><img src="https://img.shields.io/badge/версия-1.0.0--alpha2-334155?style=for-the-badge" alt="Текущая версия 1.0.0-alpha2"></a>
+  <a href="https://github.com/silikonoff/silikbox/releases"><img src="https://img.shields.io/badge/версия-1.0.0--alpha3-334155?style=for-the-badge" alt="Текущая версия 1.0.0-alpha3"></a>
 </p>
 
 <p align="center">
@@ -47,8 +47,8 @@ silikbox работает с **вашим сервером или подписк
 
 | Текущая сборка | Где скачать |
 | --- | --- |
-| **silikbox 1.0.0-alpha2 · Android ARM64** | **[Скачать APK](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha2/silikbox-1.0.0-alpha2-arm64-v8a.apk)** |
-| Описание выпуска, SHA-256 и отчёт проверки | [Релиз 1.0.0-alpha2](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0-alpha2) |
+| **silikbox 1.0.0-alpha3 · Android ARM64** | **[Скачать APK](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha3/silikbox-1.0.0-alpha3-arm64-v8a.apk)** |
+| Описание выпуска, SHA-256 и отчёт проверки | [Релиз 1.0.0-alpha3](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0-alpha3) |
 | Все опубликованные версии | [GitHub Releases](https://github.com/silikonoff/silikbox/releases) |
 
 ### Первое подключение
@@ -83,6 +83,7 @@ silikbox работает с **вашим сервером или подписк
 - Правила по доменам, IP/подсетям, портам, приложениям и типу трафика; действия **прокси / напрямую / блокировать**.
 - GeoIP / GeoSite и наборы правил; обход локальной сети, настройка IPv6 и распознавания трафика.
 - Раздельные DNS для прямого и проксируемого трафика, DNS-маршрутизация и **FakeDNS / FakeIP**.
+- Автоматический поиск адреса VPN-сервера: **Google DoH → обычный DNS Cloudflare → системный DNS Android**. Подробнее о резерве и конфиденциальности — [DNS](docs/DNS.md).
 - DNS по UDP/TCP, **DoH**, **DoT**, **DoQ** и **HTTP/3** в зарегистрированных транспортах ядра.
 - Локальный смешанный HTTP/SOCKS-вход; доступ из локальной сети включается отдельно в настройках.
 

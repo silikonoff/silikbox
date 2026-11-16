@@ -2,6 +2,7 @@ package libcore
 
 import (
 	"context"
+	"libcore/bootstrapdns"
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/adapter/endpoint"
@@ -83,7 +84,6 @@ func nekoboxAndroidOutboundRegistry() *outbound.Registry {
 	tuic.RegisterOutbound(registry)
 	hysteria2.RegisterOutbound(registry)
 
-
 	return registry
 }
 
@@ -116,6 +116,12 @@ func nekoboxAndroidDNSTransportRegistry(localTransport LocalDNSTransport) *dns.T
 			return newPlatformTransport(localTransport, tag, options), nil
 		})
 	}
+	bootstrapdns.Register(registry, func(ctx context.Context, logger log.ContextLogger, tag string) (adapter.DNSTransport, error) {
+		if localTransport != nil {
+			return newPlatformTransport(localTransport, tag, option.LocalDNSServerOptions{}), nil
+		}
+		return local.NewTransport(ctx, logger, tag, option.LocalDNSServerOptions{})
+	})
 
 	return registry
 }

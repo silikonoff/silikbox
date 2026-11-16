@@ -25,7 +25,7 @@ GOTMPDIR; иначе сборщик создаёт их в `.build/windows`.
 
 Подписанные релизы собираются локально прежним ключом владельца. Для обновления
 поверх alpha5 и NickMadBox alpha1 нужны тот же пакет, сертификат и versionCode выше260.
-silikbox1.0.0-alpha2 имеет versionCode265. Рабочий keystore не заменять и не
+silikbox1.0.0-alpha3 имеет versionCode270. Рабочий keystore не заменять и не
 передавать в GitHub. SDK, кэши и AAR в исходники не входят.
 
 GitHub Actions проверяет тесты и создаёт **неподписанный APK**. Это не установочный
@@ -36,7 +36,7 @@ GitHub Actions проверяет тесты и создаёт **неподпи�
 ```powershell
 python tools/check_repository.py
 go -C libcore test -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest
-python tools/verify_apk.py APK_PATH app/libs/libcore.aar report.json --runtime-label 1.14.4-silikbox.1
+python tools/verify_apk.py APK_PATH app/libs/libcore.aar report.json --runtime-label 1.14.4-silikbox.2
 ```
 
 Также проверять `apksigner verify`, alignment16KiB, пакет и ярлык через

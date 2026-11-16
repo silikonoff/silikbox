@@ -68,15 +68,16 @@ if ($LASTEXITCODE -ne 0) {
 if ($PrepareOnly) { return }
 & $goExe -C $mobile install ./cmd/gomobile ./cmd/gobind
 if ($LASTEXITCODE) { throw 'gomobile tool build failed' }
-$env:GOBIND = 'gobind'
+$env:GOBIND = Join-Path $env:GOPATH 'bin\gobind.exe'
 $gomobile = Join-Path $env:GOPATH 'bin\gomobile.exe'
-& $gomobile init
-if ($LASTEXITCODE) { throw 'gomobile init failed' }
+# Android bind needs this work directory, not OpenAL initialization. `gomobile
+# init` downloads gobind@latest and would replace our pinned bundled tool.
+New-Item -ItemType Directory -Force (Join-Path $env:GOPATH 'pkg\gomobile') | Out-Null
 $output = Join-Path $repo 'app\libs\libcore.aar'
 New-Item -ItemType Directory -Force (Split-Path $output) | Out-Null
 Push-Location (Join-Path $repo 'libcore')
 try {
-    & $gomobile bind -target $Target -androidapi 21 -o $output -trimpath -ldflags '-s -w -X github.com/sagernet/sing-box/constant.Version=1.14.4-silikbox.1' -tags 'with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api' .
+    & $gomobile bind -target $Target -androidapi 21 -o $output -trimpath -ldflags '-s -w -X github.com/sagernet/sing-box/constant.Version=1.14.4-silikbox.2' -tags 'with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api' .
     if ($LASTEXITCODE) { throw 'libcore AAR build failed' }
 } finally { Pop-Location }
 Get-FileHash -LiteralPath $output -Algorithm SHA256

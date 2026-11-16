@@ -114,7 +114,9 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var globalCustomConfig by configurationStore.string(Key.GLOBAL_CUSTOM_CONFIG) { "" }
 
     var remoteDns by configurationStore.string(Key.REMOTE_DNS) { "https://dns.google/dns-query" }
-    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https://223.5.5.5/dns-query" }
+    var directDns by configurationStore.string(Key.DIRECT_DNS) { "https://dns.google/dns-query" }
+    var bootstrapDns by configurationStore.boolean(Key.BOOTSTRAP_DNS) { true }
+    var bootstrapSystemDns by configurationStore.boolean(Key.BOOTSTRAP_SYSTEM_DNS) { true }
     var enableDnsRouting by configurationStore.boolean(Key.ENABLE_DNS_ROUTING) { true }
     var enableFakeDns by configurationStore.boolean(Key.ENABLE_FAKEDNS) { true }
 
@@ -128,6 +130,14 @@ object DataStore : OnPreferenceDataStoreChangeListener {
     var mixedPort: Int
         get() = getLocalPort(Key.MIXED_PORT, 2080)
         set(value) = saveLocalPort(Key.MIXED_PORT, value)
+
+    fun migrateDnsDefaults() {
+        for (key in listOf(Key.DIRECT_DNS, Key.REMOTE_DNS)) {
+            val before = configurationStore.getString(key) ?: continue
+            val after = moe.matsuri.nb4a.net.DnsDefaults.migrate(before)
+            if (after != before) configurationStore.putString(key, after)
+        }
+    }
 
     fun initGlobal() {
         if (configurationStore.getString(Key.MIXED_PORT) == null) {

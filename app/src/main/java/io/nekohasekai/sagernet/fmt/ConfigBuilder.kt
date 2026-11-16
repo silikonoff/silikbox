@@ -742,6 +742,13 @@ fun buildConfig(
     }.let {
         val configMap = it.asMap()
         Util.mergeJSON(configMap, proxy.requireBean().customConfigJson)
+        // Custom full configurations and exports keep their own resolver policy.
+        if (!forExport && DataStore.bootstrapDns && DataStore.globalCustomConfig.isBlank()
+            && proxy.requireBean().customConfigJson.isBlank()) {
+            configMap["_silikbox_bootstrap_dns"] = mapOf(
+                "system_fallback" to DataStore.bootstrapSystemDns
+            )
+        }
         ConfigBuildResult(
             gson.toJson(configMap),
             externalIndexMap,

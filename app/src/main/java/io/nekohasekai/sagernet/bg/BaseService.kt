@@ -145,7 +145,7 @@ class BaseService {
             }
             try {
                 return io.nekohasekai.sagernet.bg.proto.ConnectionDiagnostics.test(
-                    data!!.proxy!!.box, DataStore.connectionTestURL, 3000, "running_vpn"
+                    data!!.proxy!!.box, DataStore.connectionTestURL, 12000, "running_vpn"
                 )
             } catch (e: Exception) {
                 error(Protocols.genFriendlyMsg(e.readableMessage))

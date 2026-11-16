@@ -141,6 +141,17 @@
     </PreferenceCategory>
 
     <PreferenceCategory app:title="@string/cag_dns">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="bootstrapDns"
+            app:title="@string/bootstrap_dns"
+            app:summary="@string/bootstrap_dns_summary" />
+        <SwitchPreference
+            app:defaultValue="true"
+            app:dependency="bootstrapDns"
+            app:key="bootstrapSystemDns"
+            app:title="@string/bootstrap_system_dns"
+            app:summary="@string/bootstrap_system_dns_summary" />
         <EditTextPreference
             app:defaultValue="https://dns.google/dns-query"
             app:icon="@drawable/ic_action_dns"
@@ -155,7 +166,7 @@
             app:title="@string/domain_strategy_for_remote"
             app:useSimpleSummaryProvider="true" />
         <EditTextPreference
-            app:defaultValue="https://223.5.5.5/dns-query"
+            app:defaultValue="https://dns.google/dns-query"
             app:icon="@drawable/ic_action_dns"
             app:key="directDns"
             app:title="@string/direct_dns"

@@ -552,4 +552,8 @@
         <item quantity="many">Добавлено профилей: %d</item>
         <item quantity="other">Добавлено профилей: %d</item>
     </plurals>
+    <string name="bootstrap_dns">Резерв DNS для VPN-сервера</string>
+    <string name="bootstrap_dns_summary">Google DoH → обычный DNS Cloudflare. Только поиск адреса VPN-сервера; запросы к Cloudflare не зашифрованы. Пользовательские конфигурации используют свои DNS.</string>
+    <string name="bootstrap_system_dns">Системный DNS как последний резерв</string>
+    <string name="bootstrap_system_dns_summary">Если Google и Cloudflare недоступны, искать адрес VPN-сервера через DNS Android. Имя сервера может передаваться без шифрования.</string>
 </resources>

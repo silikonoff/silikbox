@@ -2,6 +2,7 @@ package configcompat
 
 import (
 	"context"
+	"libcore/bootstrapdns"
 	"testing"
 
 	box "github.com/sagernet/sing-box"
@@ -40,9 +41,11 @@ func TestMigratedProfilesDecodeWithCore114(t *testing.T) {
 	transport.RegisterTLS(dnsReg)
 	transport.RegisterHTTPS(dnsReg)
 	local.RegisterTransport(dnsReg)
+	bootstrapdns.Register(dnsReg, nil)
 	fakeip.RegisterTransport(dnsReg)
 	ctx := box.Context(context.Background(), ins, outs, eps, dnsReg, service.NewRegistry(), certificate.NewRegistry())
 	fixtures := []string{
+		`{"_silikbox_bootstrap_dns":{"system_fallback":true},"outbounds":[{"type":"vless","tag":"proxy","server":"vpn.example","server_port":443,"uuid":"00000000-0000-4000-8000-000000000001"},{"type":"direct","tag":"direct"}],"route":{"final":"proxy"},"dns":{"servers":[{"tag":"dns-direct","address":"local","detour":"direct"},{"tag":"dns-remote","address":"https://dns.google/dns-query","detour":"proxy"}],"final":"dns-remote","rules":[{"outbound":["any"],"server":"dns-direct"}]}}`,
 		`{"inbounds":[{"type":"tun","tag":"tun-in","inet4_address":["172.19.0.1/30"],"sniff":true,"sniff_override_destination":true,"domain_strategy":"prefer_ipv4","stack":"gvisor"}],"outbounds":[{"type":"vless","tag":"proxy","server":"test.invalid","server_port":443,"uuid":"00000000-0000-4000-8000-000000000001","flow":"xtls-rprx-vision","tls":{"enabled":true,"server_name":"test.invalid","utls":{"enabled":true,"fingerprint":"chrome"},"reality":{"enabled":true,"public_key":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA","short_id":"0123"}}},{"type":"direct","tag":"direct"}],"route":{"final":"proxy","rules":[{"port":53,"action":"hijack-dns"}]},"dns":{"final":"remote","independent_cache":true,"servers":[{"address":"local","tag":"local","detour":"direct"},{"address":"1.1.1.1","tag":"direct-dns","detour":"direct","address_resolver":"local"},{"address":"https://dns.example/dns-query","tag":"remote","address_resolver":"direct-dns","strategy":"prefer_ipv4"},{"address":"rcode://success","tag":"block"}],"rules":[{"outbound":["any"],"server":"direct-dns"},{"domain":["blocked.invalid"],"server":"block","disable_cache":true}]}}`,
 		`{"outbounds":[{"type":"wireguard","tag":"proxy","server":"wg.invalid","server_port":51820,"local_address":["10.0.0.2/32"],"private_key":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=","peer_public_key":"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=","reserved":"AQID","mtu":1280}],"route":{"final":"proxy"},"dns":{"final":"fake","fakeip":{"enabled":true,"inet4_range":"198.18.0.0/15","inet6_range":"fc00::/18"},"servers":[{"address":"fakeip","tag":"fake","strategy":"ipv4_only"}],"rules":[{"server":"fake","inbound":["tun-in"],"disable_cache":true}]}}`,
 	}
