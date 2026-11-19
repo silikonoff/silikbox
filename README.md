@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="DOWNLOADS.md"><img src="https://img.shields.io/badge/Скачать_для_Android-Downloads-2683FF?style=for-the-badge&amp;logo=android&amp;logoColor=white" alt="Downloads — готовые APK для Android"></a>
-  <a href="https://github.com/silikonoff/silikbox/releases/latest"><img src="https://img.shields.io/badge/версия-1.0.0-334155?style=for-the-badge" alt="Текущая версия 1.0.0"></a>
+  <a href="https://github.com/silikonoff/silikbox/releases/latest"><img src="https://img.shields.io/badge/версия-1.1-334155?style=for-the-badge" alt="Текущая версия 1.1"></a>
 </p>
 
 <p align="center">
@@ -37,11 +37,13 @@
 
 silikbox работает с **вашим сервером или подпиской провайдера**.
 
-## Новое в 1.0.0 · 19 ноября 2026
+## Новое в 1.1 · 19 ноября 2026
 
-- **VLESS XHTTP / SplitHTTP** со встроенным Xray. Поддерживается штатный импорт ссылок из 3x-ui с `type=xhttp` и `type=splithttp`.
-- **Подписанный установочный APK для ARM64.** Установка поверх предыдущих сборок silikbox сохраняет данные приложения.
-- **Резерв DNS при запуске VPN:** Google DoH → обычный DNS Cloudflare → системный DNS Android. Если один этап недоступен, клиент переходит к следующему с ограниченным временем ожидания. Цепочка применяется только к поиску адреса VPN-сервера.
+- **Room 2.7.2 и KSP2.** Обновлены библиотека базы данных и генератор кода. Минимальная версия Android — API 21.
+- **Проверено обновление 1.0.0 → 1.1.** На эмуляторе Android 14 сохранились оба тестовых профиля VLESS XHTTP и TCP, их данные и выбор активного профиля.
+- **Подписанный APK для ARM64.** Пакет и сертификат подписи совпадают с 1.0.0. Код версии 1.1 — 285.
+
+Для поиска адреса VPN-сервера действует цепочка **Google DoH → обычный DNS Cloudflare → системный DNS Android** с ограниченным ожиданием на каждом этапе.
 
 Второй и третий этапы DNS могут передавать **имя VPN-сервера без шифрования**. DNS сайтов через VPN и пользовательские правила сохраняют прежнюю обработку. Резерв можно отключить целиком или отключить только системный этап. Подробнее — **[DNS и конфиденциальность](docs/DNS.md)**, полный список изменений — **[журнал версий](docs/CHANGELOG.md)**.
 
@@ -53,8 +55,8 @@ silikbox работает с **вашим сервером или подписк
 
 | Текущая сборка | Где скачать |
 | --- | --- |
-| **silikbox 1.0.0 · Android ARM64** | **[Скачать APK](https://github.com/silikonoff/silikbox/releases/download/v1.0.0/silikbox-1.0.0-arm64-v8a.apk)** |
-| Описание выпуска, SHA-256 и отчёт проверки | [Релиз 1.0.0](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0) |
+| **silikbox 1.1 · Android ARM64** | **[Скачать APK](https://github.com/silikonoff/silikbox/releases/download/v1.1/silikbox-1.1-arm64-v8a.apk)** |
+| Описание выпуска, SHA-256 и отчёт проверки | [Релиз 1.1](https://github.com/silikonoff/silikbox/releases/tag/v1.1) |
 | Все опубликованные версии | [GitHub Releases](https://github.com/silikonoff/silikbox/releases) |
 
 ### Первое подключение
@@ -197,7 +199,7 @@ silikbox работает с **вашим сервером или подписк
 <details>
 <summary><strong>Будет ли работать ключ из NekoBox или подписка 3x-ui?</strong></summary>
 
-Импортируйте исходную ссылку или подписку. Для VLESS XHTTP используйте 1.0.0. Отдельное подключение `downloadSettings`, HTTP/3 и Vision поверх XHTTP требуют дальнейшей поддержки.
+Импортируйте исходную ссылку или подписку. VLESS XHTTP доступен с версии 1.0.0. Отдельное подключение `downloadSettings`, HTTP/3 и Vision поверх XHTTP требуют дальнейшей поддержки.
 
 При импорте Clash / Meta YAML переносятся поддерживаемые узлы. Правила, группы и все настройки исходного клиента автоматически в полном объёме не переносятся.
 
