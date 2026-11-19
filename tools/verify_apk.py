@@ -2,7 +2,9 @@
 import argparse
 import hashlib
 import json
+import re
 import struct
+import subprocess
 import zipfile
 from pathlib import Path
 
@@ -11,11 +13,30 @@ def sha256(data):
     return hashlib.sha256(data).hexdigest()
 
 
+def launcher_resources(apk_path, asset_names, aapt2):
+    expected_apis = {"21", "26", "33"}
+    if aapt2 is None:
+        paths = {match[1]: name for name in asset_names
+                 if (match := re.fullmatch(r"res/mipmap-[^/]+-v(21|26|33)/ic_launcher\.xml", name))}
+    else:
+        resources = subprocess.check_output(
+            [str(aapt2), "dump", "resources", str(apk_path)], encoding="utf-8")
+        marker = re.search(r"(?m)^    resource \S+ mipmap/ic_launcher[ \t]*$", resources)
+        assert marker is not None, "missing mipmap/ic_launcher resource"
+        values = resources[marker.end():].split("\n    resource ", 1)[0]
+        paths = {api or "21": name for api, name in re.findall(
+            r"(?m)^[ \t]+\(anydpi(?:-v(21|26|33))?\) \(file\) (\S+\.xml) type=XML$", values)}
+    assert set(paths) == expected_apis, f"missing launcher XML for API {expected_apis - paths.keys()}"
+    assert set(paths.values()) <= asset_names, "launcher XML missing from APK"
+    return sorted(paths.values())
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument("apk", type=Path)
 parser.add_argument("aar", type=Path)
 parser.add_argument("report", type=Path)
 parser.add_argument("--runtime-label", default="1.14.4-silikbox.2")
+parser.add_argument("--aapt2", type=Path, help="Inspect launcher resources even when APK paths are shortened")
 args = parser.parse_args()
 with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
     libraries = [n for n in apk.namelist() if n.startswith("lib/") and n.endswith(".so")]
@@ -45,9 +66,7 @@ with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
               "assets/yacd.zip", "assets/yacd.version.txt"]
     # The source tree uses version files without a .txt suffix in some upstream builds.
     asset_names = set(apk.namelist())
-    launcher_xmls = [n for n in asset_names if n.startswith("res/mipmap-") and n.endswith("/ic_launcher.xml")]
-    for version in (21, 26, 33):
-        assert any(f"-v{version}/" in name for name in launcher_xmls), launcher_xmls
+    launcher_xmls = launcher_resources(args.apk, asset_names, args.aapt2)
     checked_assets = []
     for name in assets:
         actual = name if name in asset_names else name.removesuffix(".txt")
@@ -64,7 +83,7 @@ with zipfile.ZipFile(args.apk) as apk, zipfile.ZipFile(args.aar) as aar:
         "abi": "arm64-v8a", "runtime_label": args.runtime_label,
         "elf_load_alignments": alignments,
         "bundled_assets": checked_assets,
-        "launcher_xmls": sorted(launcher_xmls),
+        "launcher_xmls": launcher_xmls,
         "scope": "static artifact validation; no Android runtime or VPN acceptance",
     }
 args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")

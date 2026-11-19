@@ -78,7 +78,8 @@ jobs:
           $apk = @(Get-ChildItem app/build/outputs/apk/oss/release -Filter '*arm64-v8a*.apk')
           if ($apk.Count -ne 1) { throw 'Expected one ARM64 APK' }
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.3
+          $aapt2 = Join-Path $env:ANDROID_HOME 'build-tools/35.0.1/aapt2.exe'
+          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.3 --aapt2 $aapt2
           if ($LASTEXITCODE) { throw 'Native APK validation failed' }
           python tools/unsigned_apk.py $apk[0].FullName artifacts/silikbox-ci-unsigned-arm64.apk
           'НЕПОДПИСАННЫЙ артефакт CI. Для установки используйте подписанные APK из Releases.' | Set-Content artifacts/README.txt

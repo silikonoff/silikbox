@@ -35,7 +35,8 @@ GitHub Actions проверяет тесты и создаёт **неподпи�
 python tools/check_repository.py
 go -C libcore test -ldflags '-checklinkname=0' -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest ./bootstrapdns ./xhttp
 ./gradlew.bat app:testOssDebugUnitTest --tests '*XHttpImportTest'
-python tools/verify_apk.py APK_PATH app/libs/libcore.aar report.json --runtime-label 1.14.4-silikbox.3
+$aapt2 = Join-Path $env:ANDROID_HOME 'build-tools/35.0.1/aapt2.exe'
+python tools/verify_apk.py APK_PATH app/libs/libcore.aar report.json --runtime-label 1.14.4-silikbox.3 --aapt2 $aapt2
 ```
 
 Также проверять `apksigner verify`, alignment16KiB, пакет и ярлык через
