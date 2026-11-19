@@ -2,6 +2,7 @@
 
 Набор для сборки XHTTP — Windows PowerShell, Python 3.11+, Git, Go 1.27.3, JDK 21,
 Android SDK35, build-tools35.0.1, NDK28.2.13676358. Путь проекта без пробелов.
+Gradle Wrapper использует Gradle 8.14.7, AGP 8.11.1 и Kotlin 2.2.21.
 В PATH должны быть Python, Git, Go и Java. Ядро — закреплённый sing-box с нашим
 патчем; libneko/gomobile уже находятся в `third_party`.
 
