@@ -1,5 +1,14 @@
 # Журнал версий
 
+## silikbox 1.0.0 — 19.11.2026
+
+- Добавлен **VLESS XHTTP / SplitHTTP** через встроенный Xray-core 26.11.9. Android VPN, DNS и маршрутизацию обслуживает sing-box 1.14.4-silikbox.3.
+- Импорт и экспорт VLESS XHTTP-ссылок 3x-ui сохраняют Host, путь, режим, параметры TLS/REALITY и поддерживаемые поля `extra`.
+- На физическом Infinix с Android 11 проверен **VLESS + XHTTP + REALITY с 3x-ui на публичном 443**. Через Android VPN получен 1 МиБ по HTTPS с кодом 200.
+- Подписанный релиз для ARM64 имеет versionCode 280 и сохраняет идентификатор и сертификат прежних сборок.
+
+**[Скачать APK и отчёт проверки](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0)**
+
 ## silikbox 1.0.0-alpha3 — 16.11.2026
 
 - Добавлен резерв поиска адреса VPN-сервера: **Google DoH → обычный DNS Cloudflare → системный DNS Android**. Этапы ограничены по времени; в настройках можно отключить резерв или только системный этап.

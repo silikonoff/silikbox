@@ -21,6 +21,12 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     public String path;
 
+    public String xhttpMode;
+    public String xhttpExtra;
+    public String xhttpEncryption;
+    public String xhttpSpiderX;
+    public String xhttpMldsaVerify;
+
     // --------------------------------------- tls?
 
     public String security;
@@ -79,6 +85,11 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
         if (JavaUtil.isNullOrBlank(host)) host = "";
         if (JavaUtil.isNullOrBlank(path)) path = "";
+        if (xhttpMode == null) xhttpMode = "";
+        if (xhttpExtra == null) xhttpExtra = "";
+        if (xhttpEncryption == null) xhttpEncryption = "none";
+        if (xhttpSpiderX == null) xhttpSpiderX = "";
+        if (xhttpMldsaVerify == null) xhttpMldsaVerify = "";
 
         if (JavaUtil.isNullOrBlank(security)) {
             if (this instanceof TrojanBean) {
@@ -112,7 +123,8 @@ public abstract class StandardV2RayBean extends AbstractBean {
 
     @Override
     public void serialize(ByteBufferOutput output) {
-        output.writeInt(4);
+        boolean xhttp = "xhttp".equals(type);
+        output.writeInt(xhttp ? 5 : 4);
         super.serialize(output);
         output.writeString(uuid);
         output.writeString(encryption);
@@ -165,6 +177,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
         output.writeBoolean(muxPadding);
         output.writeInt(muxType);
         output.writeInt(muxConcurrency);
+        if (xhttp) {
+            output.writeString(host);
+            output.writeString(path);
+            output.writeString(xhttpMode);
+            output.writeString(xhttpExtra);
+            output.writeString(xhttpEncryption);
+            output.writeString(xhttpSpiderX);
+            output.writeString(xhttpMldsaVerify);
+        }
     }
 
     @Override
@@ -255,6 +276,15 @@ public abstract class StandardV2RayBean extends AbstractBean {
             muxPadding = input.readBoolean();
             muxType = input.readInt();
             muxConcurrency = input.readInt();
+        }
+        if (version >= 5 && "xhttp".equals(type)) {
+            host = input.readString();
+            path = input.readString();
+            xhttpMode = input.readString();
+            xhttpExtra = input.readString();
+            xhttpEncryption = input.readString();
+            xhttpSpiderX = input.readString();
+            xhttpMldsaVerify = input.readString();
         }
     }
 

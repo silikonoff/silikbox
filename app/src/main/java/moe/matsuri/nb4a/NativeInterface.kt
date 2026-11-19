@@ -24,7 +24,8 @@ class NativeInterface : BoxPlatformInterface, NB4AInterface {
     //  libbox interface
 
     override fun autoDetectInterfaceControl(fd: Int) {
-        DataStore.vpnService?.protect(fd)
+        val vpn = DataStore.vpnService ?: return
+        check(vpn.protect(fd)) { "VpnService.protect() failed" }
     }
 
     override fun openTun(singTunOptionsJson: String, tunPlatformOptionsJson: String): Long {

@@ -3,6 +3,7 @@ param(
     [Parameter(Mandatory)][string]$SdkRoot,
     [Parameter(Mandatory)][string]$JavaHome,
     [string]$Go = 'go.exe',
+    [string]$GomobileGo,
     [string]$Target = 'android/arm64',
     [switch]$PrepareOnly,
     [switch]$UseExistingEnvironment
@@ -66,8 +67,22 @@ if ($LASTEXITCODE -ne 0) {
     Invoke-Git -Arguments @('-C',$core,'apply',$patch)
 }
 if ($PrepareOnly) { return }
-& $goExe -C $mobile install ./cmd/gomobile ./cmd/gobind
-if ($LASTEXITCODE) { throw 'gomobile tool build failed' }
+# The pinned JNI generator still requires the pre-Go-1.27 go/types alias mode.
+# Only the generator is built with Go 1.25.5. Android libcore uses $Go.
+$previousToolchain = $env:GOTOOLCHAIN
+try {
+    if ($GomobileGo) {
+        $generatorGo = (Get-Command $GomobileGo -ErrorAction Stop).Source
+        $env:GOTOOLCHAIN = 'local'
+    } else {
+        $generatorGo = $goExe
+        $env:GOTOOLCHAIN = 'go1.25.5'
+    }
+    & $generatorGo -C $mobile install ./cmd/gomobile ./cmd/gobind
+    if ($LASTEXITCODE) { throw 'gomobile tool build failed' }
+} finally {
+    $env:GOTOOLCHAIN = $previousToolchain
+}
 $env:GOBIND = Join-Path $env:GOPATH 'bin\gobind.exe'
 $gomobile = Join-Path $env:GOPATH 'bin\gomobile.exe'
 # Android bind needs this work directory, not OpenAL initialization. `gomobile
@@ -77,7 +92,7 @@ $output = Join-Path $repo 'app\libs\libcore.aar'
 New-Item -ItemType Directory -Force (Split-Path $output) | Out-Null
 Push-Location (Join-Path $repo 'libcore')
 try {
-    & $gomobile bind -target $Target -androidapi 21 -o $output -trimpath -ldflags '-s -w -X github.com/sagernet/sing-box/constant.Version=1.14.4-silikbox.2' -tags 'with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api' .
+    & $gomobile bind -target $Target -androidapi 21 -o $output -trimpath -ldflags '-s -w -checklinkname=0 -extldflags=-Wl,-z,max-page-size=16384 -X github.com/sagernet/sing-box/constant.Version=1.14.4-silikbox.3' -tags 'with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api' .
     if ($LASTEXITCODE) { throw 'libcore AAR build failed' }
 } finally { Pop-Location }
 Get-FileHash -LiteralPath $output -Algorithm SHA256

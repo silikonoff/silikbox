@@ -266,6 +266,13 @@
         <item>httpupgrade</item>
     </string-array>
 
+    <string-array name="xhttp_modes">
+        <item>auto</item>
+        <item>packet-up</item>
+        <item>stream-up</item>
+        <item>stream-one</item>
+    </string-array>
+
     <string-array name="trojan_go_networks_entry">
         <item>NONE</item>
         <item>WEBSOCKET</item>

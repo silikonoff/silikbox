@@ -3,6 +3,7 @@ package libcore
 import (
 	"context"
 	"libcore/bootstrapdns"
+	"libcore/xhttp"
 
 	"github.com/sagernet/sing-box/adapter"
 	"github.com/sagernet/sing-box/adapter/endpoint"
@@ -78,6 +79,7 @@ func nekoboxAndroidOutboundRegistry() *outbound.Registry {
 	ssh.RegisterOutbound(registry)
 	shadowtls.RegisterOutbound(registry)
 	vless.RegisterOutbound(registry)
+	xhttp.Register(registry)
 	anytls.RegisterOutbound(registry)
 
 	hysteria.RegisterOutbound(registry)

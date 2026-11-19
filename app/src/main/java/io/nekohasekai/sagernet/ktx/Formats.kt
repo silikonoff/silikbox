@@ -155,7 +155,7 @@ suspend fun parseProxies(text: String): List<AbstractBean> {
                 Logs.w(it)
             }
         } else if (startsWith("vless://")) {
-            Logs.d("Try parse vless link: $this")
+            Logs.d("Import VLESS link")
             runCatching {
                 entities.add(parseV2Ray(this))
             }.onFailure {

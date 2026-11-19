@@ -50,10 +50,12 @@ fun parseV2Ray(link: String): StandardV2RayBean {
         }
     }
 
-    try {
-        return tryResolveVmess4Kitsunebi(link)
-    } catch (e: Exception) {
-        Logs.i("try Kitsunebi: " + e.readableMessage)
+    if (!link.startsWith("vless://")) {
+        try {
+            return tryResolveVmess4Kitsunebi(link)
+        } catch (e: Exception) {
+            Logs.i("try Kitsunebi: " + e.readableMessage)
+        }
     }
 
     // "std" format
@@ -153,7 +155,12 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
     }
 
     type = url.queryParameter("type") ?: "tcp"
-    if (type == "h2" || url.queryParameter("headerType") == "http") type = "http"
+    if (type.equals("splithttp", true) || type.equals("xhttp", true)) {
+        type = "xhttp"
+        require(isVLESS) { "XHTTP требует ссылку VLESS" }
+    } else if (type == "h2" || url.queryParameter("headerType") == "http") {
+        type = "http"
+    }
 
     security = url.queryParameter("security")
     if (security.isNullOrBlank()) {
@@ -170,7 +177,7 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
                 sni = it
             }
             url.queryParameter("host")?.let {
-                if (sni.isNullOrBlank()) sni = it
+                if (type != "xhttp" && sni.isNullOrBlank()) sni = it
             }
             url.queryParameter("alpn")?.let {
                 alpn = it
@@ -227,6 +234,8 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
                 path = it
             }
         }
+
+        "xhttp" -> readXHttp(url)
     }
 
     // maybe from matsuri vmess exoprt
@@ -245,7 +254,7 @@ fun StandardV2RayBean.parseDuckSoft(url: HttpUrl) {
 
     url.queryParameter("flow")?.let {
         if (isVLESS) {
-            encryption = it.removeSuffix("-udp443")
+            encryption = if (type == "xhttp") it else it.removeSuffix("-udp443")
         }
     }
 
@@ -442,12 +451,13 @@ fun StandardV2RayBean.toUriVMessVLESSTrojan(isTrojan: Boolean): String {
         .addQueryParameter("type", type)
 
     if (isVLESS) {
-        builder.addQueryParameter("encryption", "none")
+        builder.addQueryParameter("encryption", if (type == "xhttp") xhttpEncryption else "none")
         if (encryption != "auto") builder.addQueryParameter("flow", encryption)
     }
 
     when (type) {
         "tcp" -> {}
+        "xhttp" -> writeXHttp(builder)
         "ws", "http", "httpupgrade" -> {
             if (host.isNotBlank()) {
                 builder.addQueryParameter("host", host)
@@ -623,7 +633,8 @@ fun buildSingBoxOutboundTLS(bean: StandardV2RayBean): OutboundTLSOptions? {
     }
 }
 
-fun buildSingBoxOutboundStandardV2RayBean(bean: StandardV2RayBean): Outbound {
+fun buildSingBoxOutboundStandardV2RayBean(bean: StandardV2RayBean): SingBoxOption {
+    if (bean.type == "xhttp") return bean.buildXHttpOutbound()
     when (bean) {
         is HttpBean -> {
             return Outbound_HTTPOptions().apply {
