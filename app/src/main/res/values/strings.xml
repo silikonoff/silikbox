@@ -119,6 +119,8 @@
     <string name="ws_path">Путь к WebSocket</string>
     <string name="http_host">HTTP-хост</string>
     <string name="http_path">HTTP-путь</string>
+    <string name="xhttp_mode">Режим XHTTP</string>
+    <string name="xhttp_extra">Дополнительные параметры XHTTP (JSON)</string>
     <string name="grpc_service_name">Имя службы gRPC</string>
     <string name="tls">Использовать TLS</string>
     <string name="sni">SNI (индикация имени сервера)</string>

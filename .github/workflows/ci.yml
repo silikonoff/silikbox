@@ -28,7 +28,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/main' }}
       - uses: actions/setup-go@v5
         with:
-          go-version: '1.25.5'
+          go-version: '1.27.3'
           cache-dependency-path: libcore/go.sum
       - name: Проверка исходников
         run: |
@@ -52,7 +52,7 @@ jobs:
       - name: Проверки совместимости
         shell: pwsh
         run: |
-          go -C libcore test -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest ./bootstrapdns
+          go -C libcore test -ldflags '-checklinkname=0' -tags with_gvisor,with_quic,with_wireguard,with_utls,with_clash_api ./configcompat ./connectiontest ./bootstrapdns ./xhttp
           if ($LASTEXITCODE) { throw 'Tests failed' }
       - name: Сборка и проверка APK
         shell: pwsh
@@ -60,7 +60,7 @@ jobs:
           $PSNativeCommandUseErrorActionPreference = $false
           for ($attempt = 1; $attempt -le 3; $attempt++) {
             $logPath = Join-Path $env:RUNNER_TEMP "silikbox-gradle-$attempt.log"
-            ./gradlew.bat --no-daemon --max-workers=2 app:assembleOssDebug 2>&1 | Tee-Object -FilePath $logPath
+            ./gradlew.bat --no-daemon --max-workers=2 app:testOssDebugUnitTest app:assembleOssRelease 2>&1 | Tee-Object -FilePath $logPath
             $buildExitCode = $LASTEXITCODE
             if ($buildExitCode -eq 0) { break }
             $buildLog = Get-Content -LiteralPath $logPath -Raw
@@ -75,10 +75,10 @@ jobs:
             Write-Warning "Dependency repository temporarily unavailable; retry $($attempt + 1)/3 in $delaySeconds seconds"
             Start-Sleep -Seconds $delaySeconds
           }
-          $apk = @(Get-ChildItem app/build/outputs/apk/oss/debug -Filter '*arm64-v8a*.apk')
+          $apk = @(Get-ChildItem app/build/outputs/apk/oss/release -Filter '*arm64-v8a*.apk')
           if ($apk.Count -ne 1) { throw 'Expected one ARM64 APK' }
           New-Item -ItemType Directory -Force artifacts | Out-Null
-          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.2
+          python tools/verify_apk.py $apk[0].FullName app/libs/libcore.aar artifacts/validation.json --runtime-label 1.14.4-silikbox.3
           if ($LASTEXITCODE) { throw 'Native APK validation failed' }
           python tools/unsigned_apk.py $apk[0].FullName artifacts/silikbox-ci-unsigned-arm64.apk
           'НЕПОДПИСАННЫЙ артефакт CI. Для установки используйте подписанные APK из Releases.' | Set-Content artifacts/README.txt

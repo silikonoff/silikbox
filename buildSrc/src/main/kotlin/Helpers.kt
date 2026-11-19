@@ -163,6 +163,8 @@ fun Project.setupApp() {
 
         buildTypes {
             getByName("release") {
+                // Keep the installed silikbox package for in-place upgrades from alpha.
+                applicationIdSuffix = ".debug"
                 proguardFiles(
                     getDefaultProguardFile("proguard-android-optimize.txt"),
                     file("proguard-rules.pro")

@@ -1,44 +1,29 @@
-# Downloads — silikbox для Android
+# Скачать silikbox для Android
 
-Готовые подписанные APK. Собирать приложение самостоятельно не требуется.
+## silikbox 1.0.0 · ARM64
 
-**Для последних стабильных [3x-ui 3.11.0](https://github.com/MHSanaei/3x-ui/releases/tag/v3.11.0) и [Xray 26.10.31](https://github.com/XTLS/Xray-core/releases/tag/v26.10.31)** по состоянию на 04.11.2026: **VLESS TCP/RAW + REALITY + XTLS Vision**, включая исходные Chrome-профили. Совместимость механизма проверена в нашей alpha5 и сохраняется в silikbox.
-
-## Актуальная версия: 1.0.0-alpha3
-
-### [⬇ Скачать silikbox для Android · ARM64](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha3/silikbox-1.0.0-alpha3-arm64-v8a.apk)
+### [Скачать подписанный APK для Android](https://github.com/silikonoff/silikbox/releases/download/v1.0.0/silikbox-1.0.0-arm64-v8a.apk)
 
 | Файл | Назначение |
 | --- | --- |
-| **[silikbox-1.0.0-alpha3-arm64-v8a.apk](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha3/silikbox-1.0.0-alpha3-arm64-v8a.apk)** | Установка или обновление Android-приложения |
-| [silikbox-1.0.0-alpha3-SHA256.txt](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha3/silikbox-1.0.0-alpha3-SHA256.txt) | Контрольная сумма APK |
-| [silikbox-1.0.0-alpha3-validation.json](https://github.com/silikonoff/silikbox/releases/download/v1.0.0-alpha3/silikbox-1.0.0-alpha3-validation.json) | Метаданные и результаты проверки артефакта |
+| [silikbox-1.0.0-arm64-v8a.apk](https://github.com/silikonoff/silikbox/releases/download/v1.0.0/silikbox-1.0.0-arm64-v8a.apk) | Установка и обновление |
+| [silikbox-1.0.0-SHA256.txt](https://github.com/silikonoff/silikbox/releases/download/v1.0.0/silikbox-1.0.0-SHA256.txt) | Контрольная сумма APK |
+| [silikbox-1.0.0-validation.json](https://github.com/silikonoff/silikbox/releases/download/v1.0.0/silikbox-1.0.0-validation.json) | Результаты проверки APK |
 
-**[Описание выпуска →](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0-alpha3)** · **[Все версии →](https://github.com/silikonoff/silikbox/releases)** · **[Возможности приложения →](README.md)**
+[Описание выпуска](https://github.com/silikonoff/silikbox/releases/tag/v1.0.0) · [Все выпуски](https://github.com/silikonoff/silikbox/releases) · [Возможности приложения](README.md)
 
-## Что нового в alpha3
+### Что нового
 
-- **Google DoH → обычный DNS Cloudflare → системный DNS Android** для поиска адреса VPN-сервера, с ограниченным ожиданием каждого этапа. AliDNS удалён из APK.
-- Исправлена проверка подключения: повторное использование TLS-соединения и ограничение времени ожидания.
-- Установка поверх нашей предыдущей версии сохраняет ключи, профили, правила и настройки; это подтверждено сравнением баз на телефоне.
-- **Проверено на TECNO KL7 / Android 14 по Wi-Fi:** проверки подключения 53/56 мс, настоящий Android TUN, 8/8 HTTPS-запросов, загрузка 1 МиБ за 934 мс.
+- VLESS **XHTTP / SplitHTTP** через встроенный Xray-core 26.11.9.
+- Импорт VLESS XHTTP-ссылок из 3x-ui с параметрами Host, пути и REALITY.
+- Реальный трафик через **VLESS + XHTTP + REALITY на публичном 443** подтверждён на физическом Infinix с Android 11. Тест VPN загрузил 1 МиБ по HTTPS.
+- Текущая DNS-цепочка для адреса VPN-сервера — Google DoH → обычный DNS Cloudflare → системный DNS Android. [Подробнее о DNS](docs/DNS.md)
 
-Cloudflare и системный резерв могут передавать имя VPN-сервера без DNS-шифрования. DNS сайтов и пользовательские правила сохраняют прежнюю обработку. **[Как работает резерв и как его отключить →](docs/DNS.md)**
+### Установка и обновление
 
-## Что выбрать
+1. Скачайте APK на телефон с **ARM64 / arm64-v8a**. Минимальный API — Android 5.0 / API 21.
+2. Откройте файл. Если Android запросит разрешение для выбранного источника, разрешите установку.
+3. Обновляйте silikbox установкой **поверх прежней сборки**, чтобы сохранить профили и настройки. Пакет и сертификат подписи совпадают. Код новой версии — **280**.
+4. Импортируйте профиль или подписку. Выберите профиль, запустите подключение и подтвердите создание VPN.
 
-- Готовая сборка предназначена для **ARM64 / arm64-v8a**. Для других архитектур APK сейчас не публикуются.
-- Минимальный API в проекте — **Android 5.0 / API21**; проверка механизма REALITY на физическом устройстве выполнена на **Android14**. Приёмка на всех версиях Android ещё не завершена.
-- Версия **alpha** предназначена для раннего использования и обратной связи. Известные ограничения и проверки указаны в описании конкретного релиза.
-- Установочный файл имеет расширение **`.apk`**. GitHub «Source code» — архив исходников. Неподписанный артефакт Actions предназначен для проверки сборки.
-
-## Установка и обновление
-
-1. Скачайте APK по кнопке выше и откройте его на телефоне.
-2. Разрешите установку из выбранного источника, если Android запросит это разрешение.
-3. При обновлении нашей прежней версии установите APK **поверх неё**. Пакет и сертификат NekoBox SB / NickMadBox сохранены, versionCode новой сборки — **270**.
-4. Импортируйте сервер или подписку, выберите профиль и подтвердите системное разрешение на VPN при первом подключении.
-
-Оригинальный NekoBox может оставаться установленным рядом с silikbox. Одновременно Android использует одно VPN-подключение.
-
-Текущая версия использует **sing-box 1.14.4** с нашим патчем совместимости. **XHTTP / SplitHTTP ещё не поддерживается**; его добавление с Xray запланировано следующим этапом.
+Оригинальный NekoBox можно держать рядом с silikbox. Для подключения выберите один VPN-клиент.

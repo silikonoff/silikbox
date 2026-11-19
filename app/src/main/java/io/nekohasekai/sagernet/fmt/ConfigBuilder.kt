@@ -369,7 +369,7 @@ fun buildConfig(
                     }
 
                     // internal mux
-                    if (!muxApplied) {
+                    if (!muxApplied && (bean as? StandardV2RayBean)?.type != "xhttp") {
                         val muxObj = proxyEntity.singMux()
                         if (muxObj != null && muxObj.enabled) {
                             muxApplied = true

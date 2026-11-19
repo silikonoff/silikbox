@@ -32,6 +32,8 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
     private val type = pbm.add(PreferenceBinding(Type.Text, "type"))
     private val host = pbm.add(PreferenceBinding(Type.Text, "host"))
     private val path = pbm.add(PreferenceBinding(Type.Text, "path"))
+    private val xhttpMode = pbm.add(PreferenceBinding(Type.Text, "xhttpMode"))
+    private val xhttpExtra = pbm.add(PreferenceBinding(Type.Text, "xhttpExtra"))
     private val packetEncoding = pbm.add(PreferenceBinding(Type.TextToInt, "packetEncoding"))
     private val wsMaxEarlyData = pbm.add(PreferenceBinding(Type.TextToInt, "wsMaxEarlyData"))
     private val earlyDataHeaderName = pbm.add(PreferenceBinding(Type.Text, "earlyDataHeaderName"))
@@ -128,8 +130,13 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         // menu with listener
 
         type.preference.apply {
-            updateView(type.readStringFromCache())
             this as SimpleMenuPreference
+            if (isVless) {
+                val transports = resources.getStringArray(R.array.networks_value) + "xhttp"
+                entries = transports
+                entryValues = transports
+            }
+            updateView(type.readStringFromCache())
             setOnPreferenceChangeListener { _, newValue ->
                 updateView(newValue as String)
                 true
@@ -150,6 +157,10 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
         host.preference.isVisible = false
         path.preference.isVisible = false
         wsCategory.isVisible = false
+        val isXHttp = network == "xhttp"
+        xhttpMode.preference.isVisible = isXHttp
+        xhttpExtra.preference.isVisible = isXHttp
+        packetEncoding.preference.isVisible = tmpBean is VMessBean && !isXHttp
 
         when (network) {
             "tcp" -> {
@@ -158,6 +169,12 @@ abstract class StandardV2RaySettingsActivity : ProfileSettingsActivity<StandardV
             }
 
             "http" -> {
+                host.preference.setTitle(R.string.http_host)
+                path.preference.setTitle(R.string.http_path)
+                host.preference.isVisible = true
+                path.preference.isVisible = true
+            }
+            "xhttp" -> {
                 host.preference.setTitle(R.string.http_host)
                 path.preference.setTitle(R.string.http_path)
                 host.preference.isVisible = true

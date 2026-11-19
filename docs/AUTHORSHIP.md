@@ -12,7 +12,8 @@ https://github.com/silikonoff/silikbox.
 ## Наши доработки
 
 Перенос на sing-box1.14.4, совместимость конфигурации и Android API,
-автоматическая совместимость REALITY, синяя тема и отдельная иконка,
+автоматическая совместимость REALITY, адаптер Xray для VLESS XHTTP,
+синяя тема и отдельная иконка,
 обособленный пакет, русская версия silikbox и собственный процесс сборки.
 
 ## Закреплённые зависимости
@@ -20,6 +21,7 @@ https://github.com/silikonoff/silikbox.
 | Компонент | Источник и версия |
 | --- | --- |
 | sing-box | SagerNet/sing-box, `c005f35300ce76427dc285481ec5695f5b179cd2` |
+| Xray-core | [XTLS/Xray-core 26.11.9](https://github.com/XTLS/Xray-core/tree/676eaf66f8f05d4d558ee7a74b4736623d3feeb9), [MPL-2.0](https://github.com/XTLS/Xray-core/blob/v26.11.9/LICENSE) |
 | Наш патч ядра | `buildScript/patches/silikbox-core.patch` |
 | libneko | MatsuriDayo/libneko, `1c47a3af71990a7b2192e03292b4d246c308ef0b`; снимок в `third_party/libneko` |
 | gomobile | MatsuriDayo/gomobile, `17d6af34f6bd6d7e1e428e0c652c8b54a46bda4f`; снимок в `third_party/gomobile` |
