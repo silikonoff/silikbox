@@ -3,6 +3,7 @@
 Набор для сборки XHTTP — Windows PowerShell, Python 3.11+, Git, Go 1.27.3, JDK 21,
 Android SDK35, build-tools35.0.1, NDK28.2.13676358. Путь проекта без пробелов.
 Gradle Wrapper использует Gradle 8.14.7, AGP 8.11.1 и Kotlin 2.2.21.
+Room 2.7.2 работает с KSP2 и поддерживает минимальный API 21.
 В PATH должны быть Python, Git, Go и Java. Ядро — закреплённый sing-box с нашим
 патчем; libneko/gomobile уже находятся в `third_party`.
 
@@ -25,7 +26,7 @@ GOTMPDIR; иначе сборщик создаёт их в `.build/windows`.
 
 Подписывайте ARM64 APK локально прежним ключом владельца. Для обновления
 поверх silikbox alpha4 нужен тот же пакет, сертификат и versionCode выше 275.
-У silikbox 1.0.0 versionCode 280. Храните рабочий keystore вне репозитория.
+У silikbox 1.0.0 versionCode 280, у 1.1 — 285. Храните рабочий keystore вне репозитория.
 
 GitHub Actions проверяет тесты и создаёт **неподписанный APK**. Подписанные
 установочные APK доступны в [GitHub Releases](https://github.com/silikonoff/silikbox/releases).
