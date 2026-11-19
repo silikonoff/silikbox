@@ -36,7 +36,7 @@
       </g>
       <text x="86" y="435" fill="#7694BD" font-size="15">Xray-core 26.11.9<tspan dx="14" fill="#3C608F">/</tspan><tspan dx="14">sing-box 1.14.4</tspan></text>
       <rect x="1294" y="37" width="87" height="28" rx="14" fill="#1A3456" stroke="#32527A"/>
-      <text x="1337.5" y="56" fill="#A4CAFF" text-anchor="middle" font-size="12" font-weight="600" letter-spacing="2">1.0.0</text>
+      <text x="1337.5" y="56" fill="#A4CAFF" text-anchor="middle" font-size="12" font-weight="600" letter-spacing="2">1.1</text>
     </g>
     <rect x=".5" y=".5" width="1439" height="479" rx="27.5" fill="none" stroke="#557CAA" stroke-opacity=".2"/>
   </g>
